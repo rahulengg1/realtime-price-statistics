@@ -111,6 +111,9 @@ Unit Test cases and Integration test cases were written. Please use below comman
 mvn clean test
 ```
 
-find following file inside working directory - **target/site/jacoco/index.html** file, review the code coverage report 
+Find the test coverage report under project working directory - **target/site/jacoco/index.html** 
 
 
+## Comments
+
+I Like the challenge :relaxed: and want to improve test coverage as now it is 42%. 
