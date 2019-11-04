@@ -1,0 +1,15 @@
+logging:
+    level:
+        com.rahul.realtime.statistics.api: INFO
+    file: logs/tourleader-api.log
+server:
+    port: 8080
+    servlet:
+        contextPath: /api/v1
+        
+springfox:
+    documentation:
+        swagger:
+            v2:
+                path: /api-docs
+              

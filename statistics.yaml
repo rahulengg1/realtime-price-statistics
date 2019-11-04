@@ -1,0 +1,166 @@
+swagger: '2.0'
+
+info:
+  title: Solactive real-time price statistics
+  description: "API to get real-time price statistics"
+  version: "1.0"
+
+basePath: /v1
+produces:
+- application/json
+
+paths:
+
+  /ticks:
+    post:
+      summary: add a new entry for tick request
+      description: |
+        TThis end point stores instrument, price and time into 
+        local database.
+      operationId: addTick
+      consumes:
+      - "application/json"      
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "tickRequest"
+        description: "Tick request body"
+        required: true
+        schema:
+          $ref: "#/definitions/TransactionRequest"
+      tags:
+      - Transaction
+      responses:
+        201:
+          description: transaction successful
+          schema:
+            type: string 
+        204:
+          description: transaction successful.Tick is older than 60 seconds.
+          schema:
+            type: string 
+        400:
+          description: Invalid request
+        404:
+          description: Not found
+        406:
+          description: Not Acceptable
+        500:
+          description: An internal server error has occurred
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/ErrorMessage'
+
+    
+  /statistics/{instrument_identifier}:
+    get:
+      summary: Get statistics for a given instrument
+      description: |
+        This is the endpoint with statistics for a given instrument.
+      operationId: getInstrumentStatistics
+      parameters:
+      - name: instrument_identifier
+        in: path
+        description: instrument identifier
+        required: true
+        type: string
+      tags:
+      - Statistics
+      responses:
+        200:
+          description: statistics info about Instrument
+          schema:
+            $ref: '#/definitions/StatisticsResponse'
+        404:
+          description: Not found
+        406:
+          description: Not Acceptable                    
+        500:
+          description: An internal server error has occurred
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/ErrorMessage'                      
+
+  /statistics:
+    get:
+      summary: statistics info for all Instruments
+      description: |
+       This is the endpoint with aggregated statistics for all ticks across all instruments.
+      operationId: test
+      tags: 
+      - Statistics
+      responses:
+        200:
+          description: Statistics response for all instruments
+          schema:
+            $ref: '#/definitions/StatisticsResponse'
+        404:
+          description: Not found
+        406:
+          description: Not Acceptable          
+        500:
+          description: An internal server error has occurred
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/ErrorMessage'
+
+definitions:
+
+  TransactionRequest:
+    type: object
+    properties:
+      price:
+        type: number
+        description: current trade price of a financial instrument.
+        example: 12.65
+        format: double
+      instrument:
+        type: string
+        description: financial instrument identifier.
+        example: XXX
+      timestamp:
+        type: number
+        description: time when request generated
+        format: int64
+        
+  StatisticsResponse:
+    type: object
+    properties:
+      avg:
+        type: number
+        description: avg is a double specifying the average amount of all tick prices in the last 60 seconds.
+        example: 100
+        format: double
+      max:
+        type: number
+        description: max is a double specifying single highest tick price in the last 60 seconds.
+        example: 200
+        format: double
+      min:
+        type: number
+        description: min is a double specifying single lowest tick price in the last 60 seconds.
+        example: 50
+        format: double     
+      count:
+        type: number
+        description: count is a long specifying the total number of ticks happened in the last 60 seconds.
+        example: 10
+        format: int64
+
+  ErrorMessage:
+    type: object
+    properties:
+      status:
+        type: integer
+        format: int32
+      timeStamp:
+        type: string
+        format: date-time
+      error:
+        type: array
+        items:
+          type: string
